@@ -9,10 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   visualization_msgs
-  moveit_ros_planning_interface
   rviz_visual_tools
-  moveit_visual_tools
-  moveit_planners_ompl
 )
 
 find_package(Eigen3 REQUIRED)
@@ -42,14 +39,14 @@ include_directories(
 ## Libraries ##
 ###############
 ## Declare C++ libraries here
-add_library(${PROJECT_NAME}_my_library src/ur5e_controller.cpp)
+add_library(${PROJECT_NAME}_my_library src/ur_controller.cpp)
 
 ###############
 ## Executable ##
 ###############
 ## Declare C++ executable
-add_executable(${PROJECT_NAME} src/main.cpp 
-    src/ur5e_controller.cpp)
+add_executable(${PROJECT_NAME}
+    src/ur_controller.cpp)
 
 ## Add cmake target dependencies of the executable, enforces generating messages
 ## VERY VERY VERY HIGHLY unlikely to change

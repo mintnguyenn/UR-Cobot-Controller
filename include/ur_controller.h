@@ -1,5 +1,5 @@
-#ifndef UR5E_CONTROLLER_H
-#define UR5E_CONTROLLER_H
+#ifndef UR_CONTROLLER_H
+#define UR_CONTROLLER_H
 
 #include <iostream>
 #include <sstream>
@@ -19,7 +19,9 @@ typedef actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>
 
 class Manipulator_Controller
 {
+
 public:
+    // Default constructor and destructor
     Manipulator_Controller();
     ~Manipulator_Controller();
 
