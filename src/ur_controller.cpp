@@ -1,7 +1,6 @@
 #include "ur_controller.h"
 
-std::vector<std::vector<double>> input_data_joint_spacee(std::string file_name)
-{
+std::vector<std::vector<double>> input_data_joint_space(std::string file_name){
     std::vector<std::vector<double>> result;
     result.clear();
 
@@ -16,7 +15,6 @@ std::vector<std::vector<double>> input_data_joint_spacee(std::string file_name)
         std::vector<double> join_space;
         join_space.resize(6);
         is >> join_space.at(0) >> join_space.at(1) >> join_space.at(2) >> join_space.at(3) >> join_space.at(4) >> join_space.at(5);
-        // wrapToPi(join_space);
         result.push_back(join_space);
     }
     result.pop_back();
@@ -24,16 +22,14 @@ std::vector<std::vector<double>> input_data_joint_spacee(std::string file_name)
     return result;
 }
 
-trajectory_msgs::JointTrajectoryPoint initialiseTrajectoryPoint(const std::vector<double> joint_space, double duration)
-{
+trajectory_msgs::JointTrajectoryPoint initialiseTrajectoryPoint(const std::vector<double> joint_space, double duration){
     trajectory_msgs::JointTrajectoryPoint points;
 
     points.positions.resize(6);
     points.velocities.resize(6);
     points.accelerations.resize(6);
-    for (unsigned int i = 0; i < 6; i++)
-    {
-        points.positions[i] = joint_space.at(i);
+    for (unsigned int i = 0; i < 6; i++){
+        points.positions[i] = joint_space.at(i) - 2 * M_PI;
         points.velocities[i] = 0.0;
         points.accelerations[i] = 0.0;
     }
@@ -76,8 +72,7 @@ void Manipulator_Controller::trajectoryBetween2Points(std::vector<double> start_
 
     client_->sendGoal(goal_);
 
-    while (client_->getState() != actionlib::SimpleClientGoalState::SUCCEEDED && ros::ok())
-    {
+    while (client_->getState() != actionlib::SimpleClientGoalState::SUCCEEDED && ros::ok()){
         client_->waitForResult(ros::Duration(1));
 
         ROS_INFO("Current State: %s", client_->getState().toString().c_str());
@@ -101,7 +96,6 @@ void Manipulator_Controller::trajectoryFromArray(std::vector<std::vector<double>
 
     goal_.trajectory.points.resize(array.size());
     for (unsigned int i = 0; i < array.size(); i++){
-        // wrapToPi(array.at(i));
         double time;
         time = 4 + (i * 0.1);
         goal_.trajectory.points.at(i) = initialiseTrajectoryPoint(array.at(i), time);
@@ -109,8 +103,7 @@ void Manipulator_Controller::trajectoryFromArray(std::vector<std::vector<double>
 
     client_->sendGoal(goal_);
 
-    while (client_->getState() != actionlib::SimpleClientGoalState::SUCCEEDED && ros::ok())
-    {
+    while (client_->getState() != actionlib::SimpleClientGoalState::SUCCEEDED && ros::ok()){
         client_->waitForResult(ros::Duration(1));
 
         ROS_INFO("Current State: %s", client_->getState().toString().c_str());
@@ -121,12 +114,12 @@ void Manipulator_Controller::trajectoryFromArray(std::vector<std::vector<double>
 
 int main(int argc, char **argv)
 {
-
     ros::init(argc, argv, "ur_controller");
 
     ros::NodeHandle nh("~");
     std::string mode;
-    nh.param<std::string>("mode", mode, "0"); // Run as basic mode
+    nh.param<std::string>("mode", mode, "0");
+    // nh.param<std::string>("")
 
     std::shared_ptr<Manipulator_Controller> controller(new Manipulator_Controller());
 
@@ -136,14 +129,12 @@ int main(int argc, char **argv)
         controller->trajectoryBetween2Points(start_point, end_point);
     }
 
-    std::cout << mode << std::endl;
+    if (mode.compare("implementing") == 0){
+        std::vector<std::vector<double>> motion = input_data_joint_space("/home/mintnguyen/catkin_workspace/NRMDTS_ws/src/Manipulator_Controller/data/tmech22.txt");
 
-    std::vector<std::vector<double>> motion;
-    motion = input_data_joint_spacee("/home/mintnguyen/catkin_workspace/NRMDTS_ws/src/Manipulator_Controller/data/tmech22.txt");
-
-    // std::cout << motion.size() << std::endl;
-    //   controller->trajectoryFromArray(motion);
-
+        std::cout << motion.size() << std::endl;
+        controller->trajectoryFromArray(motion);
+    }
     ros::spin();
 
     /**
