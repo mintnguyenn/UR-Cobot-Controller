@@ -3,8 +3,8 @@
 % This script operates the real UR by sending a joint array to the robot.
 
 clear;
-pause(10);
-load icra23_1.mat
+pause(5);
+load whole_motion_1.mat
 
 jointStateSubscriber = rossubscriber('joint_states','sensor_msgs/JointState');
 pause(1);
@@ -25,8 +25,9 @@ startJointSend.TimeFromStart = rosduration(0);
 joint_trajectory_send = [startJointSend];
 
 for i=1:size(jointConfigArray,1)
+% for i=1:15
     midJointSend = rosmessage('trajectory_msgs/JointTrajectoryPoint');
-    midJointSend.Positions = jointConfigArray(i, 1:6);%-(2*pi);
+    midJointSend.Positions = jointConfigArray(i, 1:6);
     midJointSend.Positions(6) = 0;
     midJointSend.TimeFromStart = rosduration((i/10));
     joint_trajectory_send = [joint_trajectory_send; midJointSend];

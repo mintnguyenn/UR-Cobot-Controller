@@ -29,7 +29,7 @@ trajectory_msgs::JointTrajectoryPoint initialiseTrajectoryPoint(const std::vecto
     points.velocities.resize(6);
     points.accelerations.resize(6);
     for (unsigned int i = 0; i < 6; i++){
-        points.positions[i] = joint_space.at(i) - 2 * M_PI;
+        points.positions[i] = joint_space.at(i);
         points.velocities[i] = 0.0;
         points.accelerations[i] = 0.0;
     }
@@ -67,8 +67,8 @@ void Manipulator_Controller::trajectoryBetween2Points(std::vector<double> start_
     goal_.trajectory.joint_names[5] = "wrist_3_joint";
 
     goal_.trajectory.points.resize(2);
-    goal_.trajectory.points.at(0) = initialiseTrajectoryPoint(start_point, 4.0);
-    goal_.trajectory.points.at(1) = initialiseTrajectoryPoint(end_point, 8.0);
+    goal_.trajectory.points.at(0) = initialiseTrajectoryPoint(start_point, 8.0);
+    goal_.trajectory.points.at(1) = initialiseTrajectoryPoint(end_point, 15.0);
 
     client_->sendGoal(goal_);
 
@@ -97,7 +97,7 @@ void Manipulator_Controller::trajectoryFromArray(std::vector<std::vector<double>
     goal_.trajectory.points.resize(array.size());
     for (unsigned int i = 0; i < array.size(); i++){
         double time;
-        time = 4 + (i * 0.1);
+        time = 4 + (i * 0.11);
         goal_.trajectory.points.at(i) = initialiseTrajectoryPoint(array.at(i), time);
     }
 
@@ -123,14 +123,17 @@ int main(int argc, char **argv)
 
     std::shared_ptr<Manipulator_Controller> controller(new Manipulator_Controller());
 
-    if (mode.compare("testing") == 0){
-        std::vector<double> start_point{2 * M_PI, -M_PI / 2, 0, -M_PI / 2, 0, 0};
-        std::vector<double> end_point{-M_PI / 4, -M_PI / 3, M_PI / 2, 0, 0, 0};
+    if (mode.compare("initialise") == 0){
+        // std::vector<double> start_point{0, -M_PI / 2, 0, -M_PI / 2, 0, 0};
+        // std::vector<double> end_point{-M_PI / 4, -M_PI / 3, M_PI / 2, 0, 0, 0};
+
+        std::vector<double> start_point{-3.0337, -2.3005, -1.9821, -6.1475, -4.5623, 0};
+        std::vector<double> end_point  {-3.0138, -2.2941, -1.9948, -6.1407, -4.5665, 0};
         controller->trajectoryBetween2Points(start_point, end_point);
     }
 
-    if (mode.compare("implementing") == 0){
-        std::vector<std::vector<double>> motion = input_data_joint_space("/home/mintnguyen/catkin_workspace/NRMDTS_ws/src/Manipulator_Controller/data/tmech22.txt");
+    if (mode.compare("motion") == 0){
+        std::vector<std::vector<double>> motion = input_data_joint_space("/home/mintnguyen/catkin_workspace/NRMDTS_ws/src/Manipulator_Controller/data/motion_1.txt");
 
         std::cout << motion.size() << std::endl;
         controller->trajectoryFromArray(motion);

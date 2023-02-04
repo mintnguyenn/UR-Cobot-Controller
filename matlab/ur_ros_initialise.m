@@ -1,11 +1,12 @@
 %%
 clear; clc;
 
-q1 = [0, -pi/2, 0, -pi/2, 0, 0];
-q2 = [-pi/4, -pi/3, pi/2, 0, 0, 0];
-qq2 = [-2.298648428654857,-2.117012324259335,-2.001421505380947,-2.054811788887437,-3.872453542649573, 0];
-qq1 = [-2.12305, -1.22493, -1.61512, 1.48271, -6.1051, 0];
-qqq = wrapToPi([5.9434    5.2201    1.8738    0.7600    1.5708    2.8018]);
+q  = [-3.0057   -2.2892   -2.0022    0.1346    1.7001         0]; % Start motion 1
+q1 = [-3.0450   -2.3094   -1.9835    0.1544    1.7838         0]; % Start reconf 1
+q2 = [-0.5195   -0.5625    1.1903   -1.3220   -0.7597         0]; % Start motion 2
+q3 = [-0.5224   -0.6149    1.2887   -1.4845   -0.7378         0]; % Start reconf 2
+qI = [-0.1944   -0.8416    1.5644    3.9896   -1.5708         0];
+
 %
 jointStateSubscriber = rossubscriber('joint_states','sensor_msgs/JointState');
 pause(1);
@@ -25,8 +26,8 @@ goal.Trajectory.Header.Stamp = rostime('Now','system');
 startJointSend.Positions = currentJointState_123456;
 startJointSend.TimeFromStart = rosduration(0);     
 
-endJointSend.Positions = q1;
-endJointSend.TimeFromStart = rosduration(3); % Duration second, this is how many seconds the movement will take
+endJointSend.Positions = q;
+endJointSend.TimeFromStart = rosduration(5); % Duration second, this is how many seconds the movement will take
 
 goal.Trajectory.Points = [startJointSend; endJointSend];
 
@@ -40,7 +41,7 @@ goal.Trajectory.Header.Stamp = rostime('Now','system');
 startJointSend.Positions = currentJointState_123456;
 startJointSend.TimeFromStart = rosduration(0);     
 
-endJointSend.Positions = q1;
+endJointSend.Positions = q;
 endJointSend.TimeFromStart = rosduration(2); % Duration second, this is how many seconds the movement will take
 
 goal.Trajectory.Points = [startJointSend; endJointSend];
