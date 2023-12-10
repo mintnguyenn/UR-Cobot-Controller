@@ -17,17 +17,37 @@
 
 typedef actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> Client;
 
-class Manipulator_Controller
+class UR_Controller
 {
 
 public:
-    // Default constructor and destructor
-    Manipulator_Controller();
-    ~Manipulator_Controller();
+    /* Default constructor */
+    UR_Controller();
 
-    void trajectoryBetween2Points(std::vector<double> start_point, std::vector<double> end_point);
+    /* Default destructor */
+    ~UR_Controller();
 
-    void trajectoryFromArray(std::vector<std::vector<double>> array);
+    /**
+     * Move the robot to a given joint space
+     * 
+     * @param point: a vector of 6 doubles value representing the joint space
+    */
+    void run(std::vector<double> point);
+
+    /**
+     * Move the robot from a start point to an end point
+     * 
+     * @param start_point: a vector of 6 doubles value representing the start point
+     * @param end_point: a vector of 6 doubles value representing the end point    
+    */
+    void run(std::vector<double> start_point, std::vector<double> end_point);
+
+    /**
+     * Move the robot along a given trajectory
+     * 
+     * @param array: a vector of vector of 6 doubles value representing the trajectory    
+    */
+    void run(std::vector<std::vector<double>> trajectory);
 
 private:
     Client* client_;

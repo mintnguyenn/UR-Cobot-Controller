@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(manipulator_controller)
+project(ur_my_controller)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
