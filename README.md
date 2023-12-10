@@ -15,6 +15,7 @@ In addition, this repository includes MATLAB scripts that can also be utilized f
 ```bash
 cd ~/catkin_ws/src
 git clone https://github.com/mintnguyenn/UR-Cobot-Controller.git
+git clone -b melodic-devel https://github.com/ros-industrial/universal_robot.git
 git clone https://github.com/UniversalRobots/Universal_Robots_ROS_Driver.git
 ```
 2. Build the software
