@@ -1,6 +1,6 @@
 #include "../include/ur_controller.h"
 
-std::vector<std::vector<double>> input_data_joint_space(std::string file_name)
+std::vector<std::vector<double>> inputJointSpace(std::string file_name)
 {
     std::vector<std::vector<double>> result;
     result.clear();
@@ -23,7 +23,6 @@ std::vector<std::vector<double>> input_data_joint_space(std::string file_name)
 
     return result;
 }
-
 trajectory_msgs::JointTrajectoryPoint initialiseTrajectoryPoint(const std::vector<double> joint_space, double duration)
 {
     trajectory_msgs::JointTrajectoryPoint points;
@@ -159,7 +158,7 @@ int main(int argc, char **argv)
 
     // Retrieve the 'mode' parameter from the Parameter Server
     std::string mode;
-    nh.param("mode", mode, std::string("initialise"));
+    nh.param("mode", mode, std::string("home"));
 
     ROS_INFO("Mode parameter set to: %s", mode.c_str());
 
@@ -171,26 +170,21 @@ int main(int argc, char **argv)
         controller->run({0, -M_PI/2, 0, -M_PI / 2, 0, 0});
     }
 
-    else if (mode.compare("initialise") == 0)
+    else if (mode.compare("single") == 0)
     {
-        std::vector<double> start_point{0, -M_PI / 2, 0, -M_PI / 2, 0, 0};
-        std::vector<double> end_point{-M_PI / 4, -M_PI / 3, M_PI / 2, 0, 0, 0};
-
-        // std::vector<double> start_point{-3.0337, -2.3005, -1.9821, -6.1475, -4.5623, 0};
-        // std::vector<double> end_point{-3.0138, -2.2941, -1.9948, -6.1407, -4.5665, 0};
-        controller->run(start_point, end_point);
-        ROS_INFO("Mode INITIALISE");
+        std::vector<std::vector<double>> motion = inputJointSpace("/home/mintnguyen/Documents/UR-Cobot-Controller/data/input_joint_space.txt");
+        controller->run(motion.at(0));
+        ROS_INFO("Mode SINGLE");
     }
 
     else if (mode.compare("motion") == 0)
     {
-        // std::vector<std::vector<double>> motion = input_data_joint_space("/home/mintnguyen/catkin_workspace/NRMDTS_ws/src/Manipulator_Controller/data/motion_1.txt");
-
-        // std::cout << motion.size() << std::endl;
-        // controller->trajectoryFromArray(motion);
+        std::vector<std::vector<double>> motion = inputJointSpace("/home/mintnguyen/Documents/UR-Cobot-Controller/data/input_motion.txt");
+        std::cout << "The motion has " << motion.size() << " steps" << std::endl;
+        controller->run(motion);
         ROS_INFO("Mode MOTION");
     }
-    ros::spin();
+    ros::spin();   
 
     /**
      * Let's cleanup everything, shutdown ros and join the thread
